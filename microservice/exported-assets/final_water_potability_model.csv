@@ -1,0 +1,2 @@
+Model_Type,Accuracy,Precision,Recall,F1_Score,AUC_ROC,Preprocessing,Parameters
+Bagging_Random_Forest_with_SMOTE,0.7075,0.7172774869109948,0.685,0.7007672634271099,0.76675625,Median_Imputation_StandardScaler_SMOTE,"n_estimators=10, base_RF_n_estimators=50"

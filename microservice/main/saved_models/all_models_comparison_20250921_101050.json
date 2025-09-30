@@ -1,0 +1,30 @@
+{
+    "Random Forest": {
+        "accuracy": 0.6554878048780488,
+        "model_type": "RandomForestClassifier"
+    },
+    "Extra Trees": {
+        "accuracy": 0.6692073170731707,
+        "model_type": "ExtraTreesClassifier"
+    },
+    "Logistic Regression": {
+        "accuracy": 0.6097560975609756,
+        "model_type": "LogisticRegression"
+    },
+    "SVM": {
+        "accuracy": 0.6692073170731707,
+        "model_type": "SVC"
+    },
+    "K-Neighbors": {
+        "accuracy": 0.6112804878048781,
+        "model_type": "KNeighborsClassifier"
+    },
+    "Naive Bayes": {
+        "accuracy": 0.614329268292683,
+        "model_type": "GaussianNB"
+    },
+    "Decision Tree": {
+        "accuracy": 0.6036585365853658,
+        "model_type": "DecisionTreeClassifier"
+    }
+}

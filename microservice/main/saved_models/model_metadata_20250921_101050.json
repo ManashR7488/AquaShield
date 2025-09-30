@@ -1,0 +1,24 @@
+{
+    "model_name": "Extra Trees",
+    "model_type": "ExtraTreesClassifier",
+    "accuracy": 0.6692073170731707,
+    "feature_names": [
+        "ph",
+        "Hardness",
+        "Solids",
+        "Chloramines",
+        "Sulfate",
+        "Conductivity",
+        "Organic_carbon",
+        "Trihalomethanes",
+        "Turbidity"
+    ],
+    "training_date": "20250921_101050",
+    "model_file": "saved_models/water_quality_model_20250921_101050.pkl",
+    "scaler_file": "saved_models/scaler_20250921_101050.pkl",
+    "imputer_file": "saved_models/imputer_20250921_101050.pkl",
+    "preprocessing_steps": [
+        "SimpleImputer with mean strategy",
+        "StandardScaler normalization"
+    ]
+}
