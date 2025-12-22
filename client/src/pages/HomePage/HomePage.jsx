@@ -91,7 +91,7 @@ const HomePage = () => {
     if (isAuthenticated) {
       navigate('/dashboard');
     } else {
-      navigate(`/auth/${action}`);
+      navigate(`app/auth/${action}`);
     }
   };
 
