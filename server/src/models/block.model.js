@@ -2,6 +2,48 @@ import mongoose from "mongoose";
 
 const { ObjectId } = mongoose.Schema.Types;
 
+// Define subdocument schemas
+const primaryHealthCenterSchema = new mongoose.Schema({
+  name: String,
+  coordinates: { latitude: Number, longitude: Number },
+  contactNumber: String,
+  incharge: ObjectId
+}, { _id: false });
+
+const subCenterSchema = new mongoose.Schema({
+  name: String,
+  coordinates: { latitude: Number, longitude: Number },
+  catchmentVillages: [String]
+}, { _id: false });
+
+const ashaWorkerSchema = new mongoose.Schema({
+  userId: ObjectId,
+  assignedVillages: [ObjectId],
+  joiningDate: Date,
+  status: String
+}, { _id: false });
+
+const volunteerSchema = new mongoose.Schema({
+  userId: ObjectId,
+  assignedVillages: [ObjectId],
+  joiningDate: Date,
+  status: String
+}, { _id: false });
+
+const villageTokenSchema = new mongoose.Schema({
+  token: String,
+  generatedFor: String,
+  generatedBy: ObjectId,
+  assignedLeader: {
+    userId: ObjectId,
+    role: String
+  },
+  isUsed: Boolean,
+  usedBy: ObjectId,
+  expiresAt: Date,
+  createdAt: Date
+}, { _id: false });
+
 const blockSchema = new mongoose.Schema(
   {
     blockId: String, // unique identifier BLK-DIST-XXXX
@@ -45,41 +87,14 @@ const blockSchema = new mongoose.Schema(
 
     // Health Infrastructure
     healthInfrastructure: {
-      primaryHealthCenters: [
-        {
-          name: String,
-          coordinates: { latitude: Number, longitude: Number },
-          contactNumber: String,
-          incharge: ObjectId, // reference to User
-        },
-      ],
-      subCenters: [
-        {
-          name: String,
-          coordinates: { latitude: Number, longitude: Number },
-          catchmentVillages: [String],
-        },
-      ],
+      primaryHealthCenters: [primaryHealthCenterSchema],
+      subCenters: [subCenterSchema],
     },
 
     // Staff Management
     staff: {
-      ashaWorkers: [
-        {
-          userId: ObjectId,
-          assignedVillages: [ObjectId], // reference to Village
-          joiningDate: Date,
-          status: String, // 'active', 'inactive', 'transferred'
-        },
-      ],
-      volunteers: [
-        {
-          userId: ObjectId,
-          assignedVillages: [ObjectId],
-          joiningDate: Date,
-          status: String,
-        },
-      ],
+      ashaWorkers: [ashaWorkerSchema],
+      volunteers: [volunteerSchema],
       totalActiveStaff: Number,
     },
 
@@ -93,21 +108,7 @@ const blockSchema = new mongoose.Schema(
     },
 
     // Generated Tokens for Village Registration
-    villageTokens: [
-      {
-        token: String, // unique 6-digit alphanumeric
-        generatedFor: String, // intended village name
-        generatedBy: ObjectId, // block officer
-        assignedLeader: {
-          userId: ObjectId, // chosen local leader
-          role: String, // 'volunteer' or 'community_member'
-        },
-        isUsed: Boolean, // default: false
-        usedBy: ObjectId, // reference to Village
-        expiresAt: Date,
-        createdAt: Date,
-      },
-    ],
+    villageTokens: [villageTokenSchema],
 
     status: String, // enum: ['pending_approval', 'active', 'inactive']
     createdBy: ObjectId,

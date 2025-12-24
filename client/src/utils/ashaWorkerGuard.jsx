@@ -46,10 +46,14 @@ export const withAshaWorkerGuard = (Component, redirectPath = '/app') => {
     const { user, isLoading } = useAuthStore();
 
     useEffect(() => {
-      if (!isLoading && (!user || user.roleInfo?.role !== 'asha_worker')) {
+      if (!isLoading && !user) {
+        // User not authenticated, redirect to login
+        navigate('/app/auth/login');
+      } else if (!isLoading && user && user.roleInfo?.role !== 'asha_worker') {
+        // User authenticated but wrong role, redirect to dashboard
         navigate(redirectPath);
       }
-    }, [user, isLoading, navigate]);
+    }, [user, isLoading, navigate, redirectPath]);
 
     // Show loading state while checking authentication
     if (isLoading) {

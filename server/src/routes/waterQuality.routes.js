@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import {
   createWaterQualityTest,
   getWaterQualityTests,
@@ -8,7 +9,6 @@ import {
   generateContaminationAlerts,
   generateWaterQualityReport
 } from '../controllers/waterQuality.controller.js';
-import { validate } from '../middleware/validation.js';
 import { authenticate } from '../middleware/auth.js';
 import { authorize } from '../middleware/authorize.js';
 import { asyncHandler } from '../middleware/errorHandler.js';

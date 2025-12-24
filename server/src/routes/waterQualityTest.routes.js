@@ -17,7 +17,8 @@ import {
   deleteTest,
   getTestsByVillage,
   getContaminationTrends,
-  scheduleFollowUpTest
+  scheduleFollowUpTest,
+  getPrediction
 } from '../controllers/waterQualityTest.controller.js';
 
 /**
@@ -199,6 +200,17 @@ router.post(
   authenticate,
   authorize(['asha_worker', 'health_official', 'admin']),
   scheduleFollowUpTest
+);
+
+/**
+ * @route   POST /api/water-quality-tests/:id/predict
+ * @desc    Get ML prediction for water quality test
+ * @access  All authenticated users
+ */
+router.post(
+  '/:id/predict',
+  authenticate,
+  getPrediction
 );
 
 export default router;

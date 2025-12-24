@@ -5,36 +5,8 @@ import NavBar from "../../components/NavBar/NavBar";
 import useAuthStore from "../../store/useAuthStore";
 
 const Layout = () => {
-  const { isAuthenticated, checkAuth, user, isLoading } = useAuthStore();
-  const navigate = useNavigate();
+  const { isAuthenticated, user, isLoading } = useAuthStore();
   const location = useLocation();
-  
-  useEffect(() => {
-    // Check if user is on auth routes
-    const isAuthRoute = location.pathname.includes('/auth/');
-    
-    console.log('🏗️ Layout Check:', {
-      pathname: location.pathname,
-      isAuthRoute,
-      isAuthenticated,
-      hasUser: !!user,
-      userRole: user?.roleInfo?.role,
-      isLoading
-    });
-    
-    if (!isAuthRoute && !isAuthenticated && !isLoading) {
-      // Try to restore authentication from cookies
-      console.log('🔄 Attempting to restore authentication...');
-      checkAuth().then((authSuccess) => {
-        console.log('🔄 Auth restoration result:', authSuccess);
-        if (!authSuccess) {
-          // Redirect to login if authentication fails
-          console.log('❌ Auth restoration failed, redirecting to login');
-          navigate('/app/auth/login');
-        }
-      });
-    }
-  }, [isAuthenticated, checkAuth, navigate, location.pathname, isLoading, user]);
   
   // Don't render layout for auth routes
   const isAuthRoute = location.pathname.includes('/auth/');

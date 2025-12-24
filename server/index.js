@@ -16,7 +16,6 @@ import { errorHandler, notFound } from './src/middleware/errorHandler.js';
 import authRoutes from './src/routes/auth.routes.js';
 import aiRoute from './src/routes/ai.routes.js';
 import apiRoutes from './src/routes/index.js';
-import authRoute from './src/routes/auth.routes.js';
 
 // Load environment variables
 dotenv.config();
@@ -114,9 +113,6 @@ app.use('/api/auth', authRoutes);
 
 // AI routes
 app.use("/api/ai", aiRoute);
-
-
-app.use('/api/auth', authRoute);
 
 // Other API routes
 app.use('/api', apiRoutes);

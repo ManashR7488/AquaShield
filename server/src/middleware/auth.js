@@ -65,6 +65,7 @@ export const authenticate = async (req, res, next) => {
         log('🔄 New access token generated and set');
       } catch (refreshError) {
         log('❌ Refresh token invalid or expired');
+        clearTokenCookies(res);
         return errorResponse(res, 'Authentication required', 401);
       }
     }

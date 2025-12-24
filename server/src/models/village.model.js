@@ -2,6 +2,30 @@ import mongoose from "mongoose";
 
 const { ObjectId } = mongoose.Schema.Types;
 
+// Define subdocument schemas
+const waterSourceSchema = new mongoose.Schema({
+  type: String,
+  name: String,
+  coordinates: { latitude: Number, longitude: Number },
+  status: String,
+  qualityLastTested: Date,
+  servesHouseholds: Number
+});
+
+const healthFacilitySchema = new mongoose.Schema({
+  type: String,
+  name: String,
+  coordinates: { latitude: Number, longitude: Number },
+  staff: [ObjectId],
+  services: [String]
+}, { _id: false });
+
+const seasonalPatternSchema = new mongoose.Schema({
+  season: String,
+  commonIssues: [String],
+  riskLevel: String
+}, { _id: false });
+
 const villageSchema = new mongoose.Schema(
   {
     villageId: String, // unique identifier VLG-BLK-XXXX
@@ -59,30 +83,13 @@ const villageSchema = new mongoose.Schema(
 
     // Infrastructure
     infrastructure: {
-      waterSources: [
-        {
-          type: String, // 'well', 'borewell', 'river', 'pond', 'pipeline'
-          name: String,
-          coordinates: { latitude: Number, longitude: Number },
-          status: String, // 'functional', 'non_functional', 'contaminated'
-          qualityLastTested: Date,
-          servesHouseholds: Number,
-        },
-      ],
+      waterSources: [waterSourceSchema],
       sanitationFacilities: {
         totalToilets: Number,
         publicToilets: Number,
         wasteManagement: String, // 'proper', 'improper', 'none'
       },
-      healthFacilities: [
-        {
-          type: String, // 'subcenter', 'anganwadi', 'private_clinic'
-          name: String,
-          coordinates: { latitude: Number, longitude: Number },
-          staff: [ObjectId], // reference to Users
-          services: [String],
-        },
-      ],
+      healthFacilities: [healthFacilitySchema],
       connectivity: {
         roadConnectivity: String, // 'all_weather', 'seasonal', 'footpath'
         mobileNetwork: String, // '2G', '3G', '4G', 'poor', 'none'
@@ -96,13 +103,7 @@ const villageSchema = new mongoose.Schema(
     healthProfile: {
       vulnerabilityScore: Number, // 1-10 (calculated)
       commonDiseases: [String],
-      seasonalPatterns: [
-        {
-          season: String, // 'monsoon', 'winter', 'summer'
-          commonIssues: [String],
-          riskLevel: String, // 'low', 'medium', 'high'
-        },
-      ],
+      seasonalPatterns: [seasonalPatternSchema],
       lastOutbreak: {
         disease: String,
         date: Date,

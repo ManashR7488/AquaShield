@@ -1,6 +1,18 @@
 import mongoose from "mongoose";
 
 const { ObjectId } = mongoose.Schema.Types;
+
+// Define subdocument schema
+const blockTokenSchema = new mongoose.Schema({
+  token: String,
+  generatedFor: String,
+  generatedBy: ObjectId,
+  isUsed: Boolean,
+  usedBy: ObjectId,
+  expiresAt: Date,
+  createdAt: Date
+}, { _id: false });
+
 const districtSchema = new mongoose.Schema(
   {
     districtId: String, // unique identifier DIST-STATE-XXXX
@@ -54,17 +66,7 @@ const districtSchema = new mongoose.Schema(
     },
 
     // Generated Tokens for Block Registration
-    blockTokens: [
-      {
-        token: String, // unique 8-digit alphanumeric
-        generatedFor: String, // intended block name
-        generatedBy: ObjectId, // district officer
-        isUsed: Boolean, // default: false
-        usedBy: ObjectId, // reference to Block
-        expiresAt: Date,
-        createdAt: Date,
-      },
-    ],
+    blockTokens: [blockTokenSchema],
 
     status: String, // enum: ['active', 'inactive']
     createdBy: ObjectId, // reference to admin user

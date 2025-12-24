@@ -6,12 +6,19 @@ const useAuthStore = create((set, get) => ({
     user: null, // Start with null user - will be set after authentication check
     isLoading: false,
     isAuthenticated: false,
+    isCheckingAuth: false,
     error: null,
     fieldErrors: {},
     
     // Check authentication status by calling /auth/me endpoint
     checkAuth: async () => {
-        set({ isLoading: true });
+        // Prevent concurrent checks
+        if (get().isCheckingAuth) {
+            console.log('⏸️ Auth check already in progress, skipping...');
+            return get().isAuthenticated;
+        }
+        
+        set({ isLoading: true, isCheckingAuth: true });
         console.log('🔍 AuthStore: Checking authentication status...');
         try {
             const response = await axiosInstance.get("/auth/me");
@@ -40,7 +47,7 @@ const useAuthStore = create((set, get) => ({
             });
             return false;
         } finally {
-            set({ isLoading: false });
+            set({ isLoading: false, isCheckingAuth: false });
         }
     },
     

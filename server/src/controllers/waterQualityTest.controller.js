@@ -407,6 +407,75 @@ const scheduleFollowUpTest = asyncHandler(async (req, res) => {
   return createdResponse(res, followUpTest, 'Follow-up test scheduled successfully');
 });
 
+/**
+ * Get ML prediction for water quality test
+ * POST /api/water-quality-tests/:id/predict
+ */
+const getPrediction = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  // Find the test
+  const waterTest = await WaterQualityTest.findById(id);
+  if (!waterTest) {
+    return notFoundResponse(res, 'Water quality test not found');
+  }
+
+  try {
+    // Prepare data for ML service
+    const mlPayload = {
+      ph: waterTest.parameters?.ph,
+      turbidity: waterTest.parameters?.turbidity,
+      tds: waterTest.parameters?.tds,
+      temperature: waterTest.parameters?.temperature,
+      conductivity: waterTest.parameters?.conductivity,
+      hardness: waterTest.parameters?.hardness,
+      chlorides: waterTest.parameters?.chlorides,
+      alkalinity: waterTest.parameters?.alkalinity,
+      dissolvedOxygen: waterTest.parameters?.dissolvedOxygen
+    };
+
+    // Call ML microservice
+    const mlResponse = await fetch('http://localhost:8000/predict', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(mlPayload)
+    });
+
+    if (!mlResponse.ok) {
+      throw new Error('ML service unavailable');
+    }
+
+    const prediction = await mlResponse.json();
+
+    // Update test with prediction
+    waterTest.mlPrediction = {
+      predictedStatus: prediction.status || 'safe',
+      confidence: prediction.confidence || 0,
+      predictionDate: new Date(),
+      modelVersion: prediction.modelVersion || '1.0',
+      features: mlPayload
+    };
+
+    await waterTest.save();
+
+    return successResponse(res, {
+      test: waterTest,
+      prediction: waterTest.mlPrediction
+    }, 'ML prediction generated successfully');
+
+  } catch (error) {
+    console.error('ML prediction error:', error);
+    // Return graceful error - don't fail the request
+    return successResponse(res, {
+      test: waterTest,
+      prediction: null,
+      warning: 'ML service unavailable - prediction could not be generated'
+    }, 'Test retrieved but ML prediction unavailable');
+  }
+});
+
 export {
   createTest,
   getTests,
@@ -415,5 +484,6 @@ export {
   deleteTest,
   getTestsByVillage,
   getContaminationTrends,
-  scheduleFollowUpTest
+  scheduleFollowUpTest,
+  getPrediction
 };

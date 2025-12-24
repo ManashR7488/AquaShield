@@ -3,6 +3,7 @@ const router = express.Router();
 
 // Import all route modules
 import waterQualityTestRoutes from './waterQualityTest.routes.js';
+import waterQualityRoutes from './waterQuality.routes.js';
 import healthReportRoutes from './healthReport.routes.js';
 import alertSystemRoutes from './alertSystem.routes.js';
 import patientRecordRoutes from './patientRecord.routes.js';
@@ -30,6 +31,7 @@ import userRoutes from './user.routes.js';
 
 // Health surveillance core routes
 router.use('/water-quality-tests', waterQualityTestRoutes);
+router.use('/water-quality', waterQualityRoutes);
 router.use('/health-reports', healthReportRoutes);
 router.use('/alerts', alertSystemRoutes);
 router.use('/patients', patientRecordRoutes);
@@ -149,6 +151,7 @@ router.use((req, res) => {
       '/api/health',
       '/api/docs',
       '/api/water-quality-tests',
+      '/api/water-quality',
       '/api/health-reports',
       '/api/alerts',
       '/api/patients',

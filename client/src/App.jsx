@@ -136,34 +136,27 @@ const App = () => {
   const { checkAuth, isAuthenticated, user, isLoading } = useAuthStore();
   const location = useLocation();
   
-  // Check authentication status on app startup
+  // Check authentication status once on app startup
   useEffect(() => {
     console.log('🚀 App startup - checking authentication...');
     
-    // Only check auth if not already authenticated and not on public routes
-    const publicRoutes = ['/', '/app/auth/login', '/app/auth/signup', '/app/auth/forgot-password'];
-    const isPublicRoute = publicRoutes.includes(location.pathname);
-    
     console.log('🔍 App Auth Check:', {
       pathname: location.pathname,
-      isPublicRoute,
       isAuthenticated,
       hasUser: !!user,
       isLoading
     });
     
-    if (!isPublicRoute && !isAuthenticated && !isLoading) {
-      console.log('🔄 App: Checking authentication status...');
-      checkAuth().then((success) => {
-        console.log('🔄 App: Auth check result:', success);
-        if (success) {
-          console.log('✅ App: Authentication restored successfully');
-        } else {
-          console.log('❌ App: Authentication check failed');
-        }
-      });
-    }
-  }, [checkAuth, isAuthenticated, location.pathname, isLoading, user]);
+    console.log('🔄 App: Checking authentication status...');
+    checkAuth().then((success) => {
+      console.log('🔄 App: Auth check result:', success);
+      if (success) {
+        console.log('✅ App: Authentication restored successfully');
+      } else {
+        console.log('❌ App: Authentication check failed');
+      }
+    });
+  }, [checkAuth]);
 
   return (
     <div className="min-h-screen w-full relative">

@@ -61,9 +61,15 @@ axiosInstance.interceptors.response.use(
       clearUser();
       
       // Only redirect if not already on auth page
-      if (!window.location.pathname.includes('/auth/')) {
-        log('🔄 Redirecting to login page');
-        window.location.href = '/app/auth/login';
+      const currentPath = window.location.pathname;
+      if (!currentPath.includes('/auth/')) {
+        log('🔄 Redirecting to login page from:', currentPath);
+        // Add small delay to allow state updates to propagate
+        setTimeout(() => {
+          window.location.href = '/app/auth/login';
+        }, 100);
+      } else {
+        log('⏸️ Already on auth page, skipping redirect');
       }
     }
     

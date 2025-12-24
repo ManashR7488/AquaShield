@@ -3,6 +3,58 @@ import { getNextSequence } from './counter.model.js';
 
 const { Schema } = mongoose;
 
+// Define subdocument schemas
+const photoSchema = new mongoose.Schema({
+  url: String,
+  description: String,
+  uploadDate: { type: Date, default: Date.now }
+}, { _id: false });
+
+const documentSchema = new mongoose.Schema({
+  url: String,
+  filename: String,
+  fileType: String,
+  uploadDate: { type: Date, default: Date.now }
+}, { _id: false });
+
+const labResultSchema = new mongoose.Schema({
+  testType: String,
+  result: String,
+  testDate: Date,
+  labName: String
+}, { _id: false });
+
+const reviewChainItemSchema = new mongoose.Schema({
+  reviewedBy: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  reviewDate: Date,
+  reviewComments: String,
+  reviewDecision: {
+    type: String,
+    enum: ['approved', 'rejected', 'needs_more_info', 'escalated'],
+    lowercase: true
+  }
+}, { _id: false });
+
+const followUpDateSchema = new mongoose.Schema({
+  scheduledDate: Date,
+  actualDate: Date,
+  followUpType: String,
+  completionStatus: {
+    type: String,
+    enum: ['pending', 'completed', 'cancelled'],
+    default: 'pending'
+  }
+}, { _id: false });
+
+const escalationRuleSchema = new mongoose.Schema({
+  condition: String,
+  threshold: Number,
+  action: String
+}, { _id: false });
+
 // Health Report Schema for comprehensive reporting system
 const healthReportSchema = new Schema({
   // Report Identification
@@ -116,23 +168,9 @@ const healthReportSchema = new Schema({
 
   // Supporting Evidence
   supportingEvidence: {
-    photos: [{
-      url: String,
-      description: String,
-      uploadDate: { type: Date, default: Date.now }
-    }],
-    documents: [{
-      url: String,
-      filename: String,
-      fileType: String,
-      uploadDate: { type: Date, default: Date.now }
-    }],
-    labResults: [{
-      testType: String,
-      result: String,
-      testDate: Date,
-      labName: String
-    }]
+    photos: [photoSchema],
+    documents: [documentSchema],
+    labResults: [labResultSchema]
   },
 
   // Workflow Management
@@ -145,19 +183,7 @@ const healthReportSchema = new Schema({
   },
 
   // Review Chain
-  reviewChain: [{
-    reviewedBy: {
-      type: Schema.Types.ObjectId,
-      ref: 'User'
-    },
-    reviewDate: Date,
-    reviewComments: String,
-    reviewDecision: {
-      type: String,
-      enum: ['approved', 'rejected', 'needs_more_info', 'escalated'],
-      lowercase: true
-    }
-  }],
+  reviewChain: [reviewChainItemSchema],
 
   // Escalation Tracking
   escalation: {
@@ -237,16 +263,7 @@ const healthReportSchema = new Schema({
     }
   },
 
-  followUpDates: [{
-    scheduledDate: Date,
-    actualDate: Date,
-    followUpType: String,
-    completionStatus: {
-      type: String,
-      enum: ['pending', 'completed', 'cancelled'],
-      default: 'pending'
-    }
-  }],
+  followUpDates: [followUpDateSchema],
 
   // Priority Management
   priority: {
@@ -262,11 +279,7 @@ const healthReportSchema = new Schema({
         type: Boolean,
         default: true
       },
-      escalationRules: [{
-        condition: String, // 'time_based', 'no_response', 'severity_increase'
-        threshold: Number, // hours for time-based rules
-        action: String
-      }]
+      escalationRules: [escalationRuleSchema]
     }
   },
 

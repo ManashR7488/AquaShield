@@ -46,7 +46,11 @@ export const withAdminGuard = (Component, redirectPath = '/app') => {
     const { user, isLoading } = useAuthStore();
 
     useEffect(() => {
-      if (!isLoading && (!user || user.roleInfo?.role !== 'admin')) {
+      if (!isLoading && !user) {
+        // User not authenticated, redirect to login
+        navigate('/app/auth/login');
+      } else if (!isLoading && user && user.roleInfo?.role !== 'admin') {
+        // User authenticated but wrong role, redirect to dashboard
         navigate(redirectPath);
       }
     }, [user, isLoading, navigate, redirectPath]);

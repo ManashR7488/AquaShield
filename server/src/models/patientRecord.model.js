@@ -432,7 +432,7 @@ const patientRecordSchema = new mongoose.Schema({
     economicStatus: {
       rationCardType: {
         type: String,
-        enum: ['apl', 'bpl', 'aay', 'phh', 'none'],
+        enum: ['APL', 'BPL', 'AAY', 'PHH', 'NONE'],
         uppercase: true
       },
       bankAccount: {

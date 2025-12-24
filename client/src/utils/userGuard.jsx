@@ -4,8 +4,8 @@
  * Ensures only authenticated users can access user-specific routes
  */
 
-import React from 'react';
-import { Navigate, Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Navigate, Link, useNavigate } from 'react-router-dom';
 import { log, warn, error, maskEmail, maskId } from './logger';
 import useAuthStore  from '../store/useAuthStore';
 
@@ -137,6 +137,8 @@ export const redirectToUnauthorized = (navigate) => {
 export const withUserGuard = (Component, options = {}) => {
   return function ProtectedComponent(props) {
     const { user, isAuthenticated, isLoading } = useAuthStore();
+    const navigate = useNavigate();
+    const redirectPath = options.unauthorizedRedirect || '/app';
     
     // Add debug logging with PII masking
     log('🔒 UserGuard Check:', {
@@ -147,6 +149,19 @@ export const withUserGuard = (Component, options = {}) => {
       isLoading
     });
     
+    // Passive guard - only redirect based on state, don't call checkAuth
+    useEffect(() => {
+      if (!isLoading && !user) {
+        // User not authenticated, redirect to login
+        log('❌ UserGuard: Not authenticated, redirecting to login');
+        navigate(options.redirectTo || '/app/auth/login');
+      } else if (!isLoading && user && user.roleInfo?.role !== 'user') {
+        // User authenticated but wrong role, redirect to dashboard
+        log('❌ UserGuard: Wrong role:', user.roleInfo?.role, 'expected: user');
+        navigate(redirectPath);
+      }
+    }, [user, isLoading, navigate, redirectPath]);
+    
     // Show loading while checking authentication
     if (isLoading) {
       return (
@@ -156,16 +171,9 @@ export const withUserGuard = (Component, options = {}) => {
       );
     }
     
-    // Check authentication first
-    if (!isAuthenticated || !user) {
-      log('❌ UserGuard: Not authenticated, redirecting to login');
-      return <Navigate to={options.redirectTo || "/app/auth/login"} replace />;
-    }
-    
-    // Check user role - Fix: Use user.roleInfo.role instead of user.role
-    if (user.roleInfo?.role !== 'user') {
-      log('❌ UserGuard: Wrong role:', user.roleInfo?.role, 'expected: user');
-      return <Navigate to={options.unauthorizedRedirect || "/app"} replace />;
+    // Don't render if not authenticated or wrong role
+    if (!user || user.roleInfo?.role !== 'user') {
+      return null;
     }
     
     log('✅ UserGuard: Access granted for user role');

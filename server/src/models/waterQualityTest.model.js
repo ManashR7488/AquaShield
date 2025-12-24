@@ -228,6 +228,22 @@ const waterQualityTestSchema = new mongoose.Schema({
     }
   },
   
+  // ML Prediction Integration
+  mlPrediction: {
+    predictedStatus: {
+      type: String,
+      enum: ['safe', 'contaminated', 'needs_treatment', 'unsafe']
+    },
+    confidence: {
+      type: Number,
+      min: 0,
+      max: 1
+    },
+    predictionDate: Date,
+    modelVersion: String,
+    features: mongoose.Schema.Types.Mixed
+  },
+  
   // Remediation Tracking
   remediation: {
     recommendedActions: [{

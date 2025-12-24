@@ -13,7 +13,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:auth": "node test-auth.js",
     "db:seed": "node scripts/seedDatabase.js",
-    "db:reset": "node scripts/resetDatabase.js"
+    "db:reset": "node scripts/resetDatabase.js",
+    "db:feed": "node feed.js"
   },
   "dependencies": {
     "@langchain/community": "^0.3.56",
